@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import * as BooksAPI from '../BooksAPI'
+import Books from './Books'
 
-const Search = ( library ) => {
+const Search = ( props ) => {
+  const { shelf, moveBook } = props;
   const [ books, setBooks ] = useState([]);
   const [ searchTerms, setSearchTerms ] = useState("");
 
@@ -12,11 +15,29 @@ const Search = ( library ) => {
 
   useEffect(async () => {
     // API call
-    const results = BooksAPI.search(searchTerms);
-    results.map(result => {
-      return result.title
-    })
-  })
+    const results = await BooksAPI.search(searchTerms);
+    
+    // Run when no errors
+    if ( results && results["error"] === undefined ) {
+      const matched = results.map(result => {
+        // Replace matching results with existing book entry to get shelf property
+        const book = shelf.filter(book => {
+          return result.id === book.id;
+        })
+        
+        if ( book.length && book[0] )
+          return book[0];
+
+        return result;
+      })
+
+      setBooks( matched );
+    }
+    else {
+      setBooks([]);
+    }
+
+  }, [searchTerms])
 
     return (
         <div className="search-books">
@@ -38,10 +59,19 @@ const Search = ( library ) => {
            </div>
           </div>
           <div className="search-books-results">
-            <ol className="books-grid"></ol>
+            <ol className="books-grid">
+              <Books 
+                books={ books } 
+                moveBook={ moveBook }/>
+            </ol>
           </div>
         </div>
     )
+}
+
+Search.propTypes = {
+  shelf: PropTypes.array.isRequired,
+  moveBook: PropTypes.func.isRequired,
 }
 
 export default Search;

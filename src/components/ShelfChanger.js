@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const ShelfChanger = ( props ) => {
     const { book, moveBook } = props;
-    const [ status, setStatus ] = useState( book.shelf );
+    const [ status, setStatus ] = useState( bookStatus(book.shelf) );
 
     const handleMoveBook = ( newShelf ) => {
         console.log('newShelf', newShelf)
@@ -13,7 +14,7 @@ const ShelfChanger = ( props ) => {
     return (
         <div className="book-shelf-changer">
             <select 
-                defaultValue={ status }
+                value={ status }
                 onChange={ (event) => {
                     handleMoveBook(event.target.value)
                 }} >
@@ -51,8 +52,13 @@ const bookStatus = ( shelf ) => {
         case "read":
             return shelf;
         default:
-            return "none";
+            return null;
     }
+}
+
+ShelfChanger.propTypes = {
+    book: PropTypes.object.isRequired,
+    moveBook: PropTypes.func.isRequired,
 }
 
 export default ShelfChanger;

@@ -1,22 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Book from './Book'
+import Books from './Books'
 
 const Shelf = ( props ) => {
-    const { name, books } = props;
+    const { name, books, moveBook } = props;
 
     return (
         <div className="bookshelf">
             <h2 className="bookshelf-title">{ name }</h2>
             <div className="bookshelf-books">
                 <ol className="books-grid">
-                    { books && books.map((book) => (
-                        <li key={ book.id }>
-                            <Book 
-                                book={ book }
-                                moveBook={ console.log } />
-                        </li>
-                    ))}
+                    <Books
+                        books={ books } 
+                        moveBook={ moveBook } />
                 </ol>
             </div>
         </div>
