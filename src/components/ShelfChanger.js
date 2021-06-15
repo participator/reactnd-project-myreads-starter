@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const ShelfChanger = ( props ) => {
+const ShelfChanger = (props) => {
     const { book, moveBook } = props;
-    const [ status, setStatus ] = useState( bookStatus(book.shelf) );
+    const [shelf, setShelf] = useState(bookStatus(book.shelf));
 
-    const handleMoveBook = ( newShelf ) => {
+    const handleMoveBook = (newShelf) => {
         console.log('newShelf', newShelf)
-        setStatus( bookStatus(newShelf) )
-        moveBook( book, newShelf );
+        setShelf(bookStatus(newShelf))
+        moveBook(book, newShelf);
     }
 
     return (
         <div className="book-shelf-changer">
-            <select 
-                value={ status }
-                onChange={ (event) => {
+            <select
+                value={bookStatus(shelf)}
+                onChange={(event) => {
                     handleMoveBook(event.target.value)
                 }} >
                 <option value="move" disabled>Move to...</option>
@@ -45,14 +45,14 @@ const ShelfChanger = ( props ) => {
  * @param {string} status - current book's status
  * @returns {string} acceptable status
  */
-const bookStatus = ( shelf ) => {
+const bookStatus = (shelf) => {
     switch (shelf) {
         case "currentlyReading":
         case "wantToRead":
         case "read":
             return shelf;
         default:
-            return null;
+            return "none";
     }
 }
 

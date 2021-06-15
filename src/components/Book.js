@@ -2,27 +2,28 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ShelfChanger from './ShelfChanger'
 
-const Book = ( props ) => {
+const Book = (props) => {
     const { book, moveBook } = props;
 
     return (
         <div className="book">
             <div className="book-top">
                 {
-                    book.imageLinks && 
-                    <div 
+                    book.imageLinks &&
+                    <div
                         className="book-cover"
-                        style={{ 
-                            width: 128, 
-                            height: 193, 
-                            backgroundImage: `url(${ book.imageLinks.smallThumbnail }})` }} />
+                        style={{
+                            width: 128,
+                            height: 193,
+                            backgroundImage: `url(${book.imageLinks.smallThumbnail}})`
+                        }} />
                 }
-                <ShelfChanger 
-                    book={ book }
-                    moveBook={ moveBook } />
+                <ShelfChanger
+                    book={book}
+                    moveBook={moveBook} />
             </div>
-            <div className="book-title">{ book.title }</div>
-            <div className="book-authors">{ book.authors && book.authors[0] }</div>
+            <div className="book-title">{book.title}</div>
+            <div className="book-authors">{book.authors && book.authors[0]}</div>
         </div>
     )
 }

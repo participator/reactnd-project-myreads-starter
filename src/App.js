@@ -19,24 +19,18 @@ const BooksApp = () => {
    * @param {func} moveTo - shelf name to move book to
    */
   const handleMoveBook = (book, moveTo) => {
-    const { currentlyReading, wantToRead, read } = books;
-
-    if ( book.shelf === undefined ||
-        book.shelf === null ) {
+    // Books not on a shelf
+    if (book.shelf === undefined) {
       book.shelf = moveTo;
       const added = [...books[moveTo], book];
 
       // Update UI state
       setBooks({
-        currentlyReading,
-        wantToRead,
-        read,
+        ...books,
         [moveTo]: added,
       });
-
-      // Update server
-      BooksAPI.update(book, moveTo);
     }
+    // Books on a shelf
     else {
       const removed = books[book.shelf].filter(curr => (
         curr.id !== book.id
@@ -44,21 +38,30 @@ const BooksApp = () => {
 
       // Update shelf location
       const originalShelf = book.shelf;
-      book.shelf = moveTo;
-      const added = [...books[moveTo], book];
 
-      // Update UI state
-      setBooks({
-        currentlyReading,
-        wantToRead,
-        read,
-        [originalShelf]: removed,
-        [moveTo]: added,
-      });
+      if (moveTo === "none") {
+        delete book.shelf;
 
-      // Update server
-      BooksAPI.update(book, moveTo);
+        // Update UI state
+        setBooks({
+          ...books,
+          [originalShelf]: removed,
+        });
+      }
+      else {
+        book.shelf = moveTo;
+        const added = [...books[moveTo], book];
+
+        // Update UI state
+        setBooks({
+          ...books,
+          [originalShelf]: removed,
+          [moveTo]: added,
+        });
+      }
     }
+    // Update server
+    BooksAPI.update(book, moveTo);
   }
 
   useEffect(async () => {
@@ -72,15 +75,11 @@ const BooksApp = () => {
     const read = requestedBooks.filter(book => {
       return book.shelf === "read"
     })
-    const none = requestedBooks.filter(book => {
-      return book.shelf === "none"
-    })
 
     setBooks({
       currentlyReading,
       wantToRead,
-      read,
-      none
+      read
     });
   }, [books.length])
 
@@ -93,8 +92,8 @@ const BooksApp = () => {
             ...books.wantToRead,
             ...books.read
           ]}
-          moveBook={ handleMoveBook }
-           />
+          moveBook={handleMoveBook}
+        />
       )} />
       <Route exact path="/" render={() => (
         <div>
