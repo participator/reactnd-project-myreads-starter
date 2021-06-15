@@ -1,49 +1,65 @@
-import React from 'react'
-// import * as BooksAPI from './BooksAPI'
+import React, { useState, useEffect } from 'react'
+import { Link, Route } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
 import './App.css'
+import Title from './components/Title'
+import Search from './components/Search'
+import Shelf from './components/Shelf'
 
-class BooksApp extends React.Component {
-  state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false
+const BooksApp = () => {
+  const [books, setBooks] = useState([]);
+
+  const handleMoveBook = ( book, moveTo ) => {
+    const removed = books[book.status].filter(curr => (
+      curr.title !== book.title &&
+      curr.author !== book.author
+      ))
+    const added = books[moveTo].push(book);
+
+    setBooks( 
+      ...books, 
+      books[book.status] = removed, 
+      books[moveTo] = added
+    );
   }
 
-  render() {
-    return (
-      <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button>
-              <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
+  useEffect(async () => {
+    const requestedBooks = await BooksAPI.getAll();
+    const currentlyReading = requestedBooks.filter( book => {
+      return book.shelf === "currentlyReading"
+    })
+    const wantToRead = requestedBooks.filter( book => {
+      return book.shelf === "wantToRead"
+    })
+    const read = requestedBooks.filter( book => {
+      return book.shelf === "read"
+    })
+    setBooks({
+      currentlyReading,
+      wantToRead,
+      read
+    });
+  }, [books.length])
 
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author"/>
-
-              </div>
-            </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
-            </div>
-          </div>
-        ) : (
+  return (
+    <div className="app">
+      <Route path="/search" render={() => (
+        <Search />
+      )} />
+        <Route exact path="/" render={() => (
           <div className="list-books">
-            <div className="list-books-title">
-              <h1>MyReads</h1>
-            </div>
+            <Title name="MyReads" />
             <div className="list-books-content">
               <div>
+                <Shelf
+                  name={ "Currently Reading" }
+                  books={ books["currentlyReading"] } />
+                <Shelf
+                  name={ "Want to Read" }
+                  books={ books["wantToRead"] } />
+                <Shelf
+                  name={ "Read" }
+                  books={ books["read"] } />
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books">
@@ -194,13 +210,12 @@ class BooksApp extends React.Component {
               </div>
             </div>
             <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
+              <Link to="/search" ><button>Add a book</button></Link>
             </div>
           </div>
-        )}
-      </div>
-    )
-  }
+        )} />
+    </div>
+  )
 }
-
+  
 export default BooksApp
