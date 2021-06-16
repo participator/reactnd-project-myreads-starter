@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import * as BooksAPI from '../BooksAPI'
 import Books from './Books'
+import { useDebounce } from '../helpers/Debounce'
 
 const Search = (props) => {
   const { shelf, moveBook } = props;
   const [books, setBooks] = useState([]);
   const [searchTerms, setSearchTerms] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerms, 500);
 
   const updateSearchTerms = terms => {
     setSearchTerms(terms);
@@ -15,8 +17,8 @@ const Search = (props) => {
 
   useEffect(async () => {
     // API call when search is not empty
-    if (searchTerms.length) {
-      const results = await BooksAPI.search(searchTerms);
+    if (debouncedSearchTerm.length) {
+      const results = await BooksAPI.search(debouncedSearchTerm);
 
       // Run when no errors
       if (results && results["error"] === undefined) {
@@ -43,7 +45,7 @@ const Search = (props) => {
     else {
       setBooks([]);
     }
-  }, [searchTerms])
+  }, [debouncedSearchTerm])
 
   return (
     <div className="search-books">

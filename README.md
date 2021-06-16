@@ -42,7 +42,8 @@ To get started developing right away:
         ├── ShelfChanger.js # Moves books between shelves
         └── Title.js # Header for the application
     └── helpers
-        └── Constants.js # Constants that can be used throughout the app
+        ├── Constants.js # Constants that can be used throughout the app
+        └── useDebounce.js # Custom hook that create a debouncer
 ```
 
 Remember that good React design practice is to create new JS files for each component and use import/require statements to include them where they are needed.
@@ -100,3 +101,17 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Contributing
 
 This project is complete for Udacity's React Nanodegree.  Shoutout to the creators of the course and projects that help ramp up developers confidence in building with React.
+
+## Resources
+
+In addition to the updates made after project was reviewed, the following resources were used:
+
+[useDebounce](https://usehooks.com/useDebounce/)
+
+[Various MDN pages](https://developer.mozilla.org/)
+
+[Don't stop the data flow](https://overreacted.io/writing-resilient-components/#principle-1-dont-stop-the-data-flow)
+
+[Logpoint](https://developer.chrome.com/blog/new-in-devtools-73/#logpoints) (Who knew this was a chrome feature?)
+
+[Suggestions for a Good README](https://www.makeareadme.com/#suggestions-for-a-good-readme)
