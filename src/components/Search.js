@@ -43,7 +43,7 @@ const Search = (props) => {
     else {
       setBooks([]);
     }
-  }, [searchTerms.length])
+  }, [searchTerms])
 
   return (
     <div className="search-books">

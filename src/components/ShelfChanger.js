@@ -1,36 +1,31 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { SHELVES } from '../helpers/Constants';
 
 const ShelfChanger = (props) => {
     const { book, moveBook } = props;
-    const [shelf, setShelf] = useState(bookStatus(book.shelf));
 
     const handleMoveBook = (newShelf) => {
-        console.log('newShelf', newShelf)
-        setShelf(bookStatus(newShelf))
         moveBook(book, newShelf);
     }
 
     return (
         <div className="book-shelf-changer">
             <select
-                value={bookStatus(shelf)}
+                value={bookStatus(book.shelf)}
                 onChange={(event) => {
                     handleMoveBook(event.target.value)
                 }} >
                 <option value="move" disabled>Move to...</option>
-                <option
-                    value="currentlyReading" >
-                    Currently Reading
-                </option>
-                <option
-                    value="wantToRead" >
-                    Want to Read
-                </option>
-                <option
-                    value="read" >
-                    Read
-                </option>
+                {
+                    SHELVES && SHELVES.map(shelf => (
+                        <option
+                            key={shelf.id}
+                            value={shelf.id}>
+                            {shelf.name}
+                        </option>
+                    ))
+                }
                 <option
                     value="none" >
                     None
@@ -45,15 +40,9 @@ const ShelfChanger = (props) => {
  * @param {string} status - current book's status
  * @returns {string} acceptable status
  */
-const bookStatus = (shelf) => {
-    switch (shelf) {
-        case "currentlyReading":
-        case "wantToRead":
-        case "read":
-            return shelf;
-        default:
-            return "none";
-    }
+const bookStatus = (shelfId) => {
+    return SHELVES.filter(shelf => (shelf.id === shelfId)).length ?
+        shelfId : "none";
 }
 
 ShelfChanger.propTypes = {

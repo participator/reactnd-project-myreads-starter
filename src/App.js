@@ -5,6 +5,7 @@ import './App.css'
 import Title from './components/Title'
 import Search from './components/Search'
 import Shelf from './components/Shelf'
+import { SHELVES } from './helpers/Constants'
 
 const BooksApp = () => {
   const [books, setBooks] = useState({
@@ -19,7 +20,7 @@ const BooksApp = () => {
    * @param {func} moveTo - shelf name to move book to
    */
   const handleMoveBook = (book, moveTo) => {
-    // Books not on a shelf
+    // Book not on a shelf
     if (book.shelf === undefined) {
       book.shelf = moveTo;
       const added = [...books[moveTo], book];
@@ -30,7 +31,7 @@ const BooksApp = () => {
         [moveTo]: added,
       });
     }
-    // Books on a shelf
+    // Book on a shelf
     else {
       const removed = books[book.shelf].filter(curr => (
         curr.id !== book.id
@@ -39,6 +40,7 @@ const BooksApp = () => {
       // Update shelf location
       const originalShelf = book.shelf;
 
+      // Remove Book from all Shelves
       if (moveTo === "none") {
         delete book.shelf;
 
@@ -48,6 +50,8 @@ const BooksApp = () => {
           [originalShelf]: removed,
         });
       }
+      // Remove Book from previous Shelf
+      // Add Book to different Shelf
       else {
         book.shelf = moveTo;
         const added = [...books[moveTo], book];
@@ -101,18 +105,15 @@ const BooksApp = () => {
             <Title name="MyReads" />
             <div className="list-books-content">
               <div>
-                <Shelf
-                  name={"Currently Reading"}
-                  books={books["currentlyReading"]}
-                  moveBook={handleMoveBook} />
-                <Shelf
-                  name={"Want to Read"}
-                  books={books["wantToRead"]}
-                  moveBook={handleMoveBook} />
-                <Shelf
-                  name={"Read"}
-                  books={books["read"]}
-                  moveBook={handleMoveBook} />
+                {
+                  SHELVES && SHELVES.map(shelf => (
+                    <Shelf
+                      key={shelf.id}
+                      name={shelf.name}
+                      books={books[shelf.id]}
+                      moveBook={handleMoveBook} />
+                  ))
+                }
               </div>
             </div>
           </div>

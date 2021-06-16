@@ -23,7 +23,13 @@ const Book = (props) => {
                     moveBook={moveBook} />
             </div>
             <div className="book-title">{book.title}</div>
-            <div className="book-authors">{book.authors && book.authors[0]}</div>
+            <div className="book-authors">
+                {book.authors && book.authors.map((author, index, authors) => (
+                    index < authors.length - 1 ?
+                        <span>{author}, </span> :
+                        <span>{author}</span>
+                ))}
+            </div>
         </div>
     )
 }
